@@ -10,6 +10,7 @@
 #include "dht11.h"
 #include "led.h"
 #include "nvs.h"
+#include "button.h"
 
 xSemaphoreHandle conexaoWifiSemaphore;
 xSemaphoreHandle conexaoMQTTSemaphore;
@@ -35,10 +36,13 @@ void trataComunicacaoComServidor(void * params)
   {
     while(true)
     {
-      struct dht11_reading dados = DHT11_read();
-      if(dados.temperature != -1 && dados.temperature != -1){
-        sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
-        mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
+      if(CONFIG_ESP_MODE == 1)
+      {
+        struct dht11_reading dados = DHT11_read();
+        if(dados.temperature != -1 && dados.temperature != -1){
+          sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
+          mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
+        }
       }
 
       sprintf(JSONAtributos, "{\"quantidade de pinos\": 5, \n\"umidade\": 20}");
@@ -54,9 +58,14 @@ void trataComunicacaoComServidor(void * params)
 
 void app_main(void)
 {
-
+    printf("MODO: %d\n", CONFIG_ESP_MODE);
     init_nvs();
-    DHT11_init(GPIO_NUM_4);
+    init_button();
+
+    if(CONFIG_ESP_MODE == 1)
+    {
+      DHT11_init(GPIO_NUM_4);
+    }
     conexaoWifiSemaphore = xSemaphoreCreateBinary();
     conexaoMQTTSemaphore = xSemaphoreCreateBinary();
     wifi_start();
