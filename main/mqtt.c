@@ -7,7 +7,6 @@
 #include "nvs_flash.h"
 #include "esp_event.h"
 #include "esp_netif.h"
-// #include "protocol_examples_common.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -77,7 +76,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 void mqtt_start()
 {
     esp_mqtt_client_config_t mqtt_config = {
-        // .broker.address.uri = "mqtt://mqtt.eclipseprojects.io",
         .broker.address.uri = "mqtt://164.41.98.25",
         .credentials.username = "GszroRcsZKO4gGPg484s"
     };

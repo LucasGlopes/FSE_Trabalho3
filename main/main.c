@@ -8,6 +8,7 @@
 #include "wifi.h"
 #include "mqtt.h"
 #include "dht11.h"
+#include "led.h"
 
 xSemaphoreHandle conexaoWifiSemaphore;
 xSemaphoreHandle conexaoMQTTSemaphore;
@@ -19,6 +20,7 @@ void conectadoWifi(void * params)
     if(xSemaphoreTake(conexaoWifiSemaphore, portMAX_DELAY))
     {
       mqtt_start();
+      start_led();
     }
   }
 }
@@ -33,8 +35,10 @@ void trataComunicacaoComServidor(void * params)
     while(true)
     {
       struct dht11_reading dados = DHT11_read();
-      sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
-      mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
+      if(dados.temperature != -1 && dados.temperature != -1){
+        sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
+        mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
+      }
 
       sprintf(JSONAtributos, "{\"quantidade de pinos\": 5, \n\"umidade\": 20}");
       mqtt_envia_mensagem("v1/devices/me/attributes", JSONAtributos);
