@@ -43,7 +43,7 @@ void trataComunicacaoComServidor(void * params)
       sprintf(JSONAtributos, "{\"quantidade de pinos\": 5, \n\"umidade\": 20}");
       mqtt_envia_mensagem("v1/devices/me/attributes", JSONAtributos);
 
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
   }
 }
