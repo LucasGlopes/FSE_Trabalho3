@@ -32,8 +32,10 @@ void start_led()
 
   ledc_fade_func_install(0);
 
-  ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, (255 * 0.1), 2000, LEDC_FADE_WAIT_DONE);
-  
+} 
 
-
+void set_pwm(int intensity)
+{
+    int percentage = intensity / 100;
+    ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, (255 * percentage), 1000 ,LEDC_FADE_WAIT_DONE);
 }
