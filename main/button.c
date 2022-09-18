@@ -5,6 +5,7 @@
 #include "freertos/queue.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
+#include "mqtt.h"
 
 #define BOTAO 0
 
@@ -16,9 +17,50 @@ static void IRAM_ATTR gpio_isr_handler(void *args)
   xQueueSendFromISR(filaDeInterrupcao, &pino, NULL);
 }
 
+// void trataInterrupcaoBotao(void *params)
+// {
+//   int pino = 0;
+
+//   while(true)
+//   {
+//     if(xQueueReceive(filaDeInterrupcao, &pino, portMAX_DELAY))
+//     {
+//       // De-bouncing
+//       int estado = gpio_get_level(pino);
+//       printf("ESTADO: %d", estado);
+//       if(estado == 1)
+//       {
+//         gpio_isr_handler_remove(pino);
+//         while(gpio_get_level(pino) == estado)
+//         {
+//           vTaskDelay(50 / portTICK_PERIOD_MS);
+//         }
+//         // Habilitar novamente a interrupção
+//         vTaskDelay(50 / portTICK_PERIOD_MS);
+//         gpio_isr_handler_add(pino, gpio_isr_handler, (void *) pino);
+//       }
+
+//     }
+//     // char JSONAtributos[200];
+//     // if(led){
+//     //     sprintf(JSONAtributos, "{\"led\": 0}");
+//     //     led = 0; 
+//     //   } else {
+//     //     sprintf(JSONAtributos, "{\"led\": 1}");
+//     //     led = 1; 
+//     //   }
+
+//     //   mqtt_envia_mensagem("v1/devices/me/attributes", JSONAtributos);
+
+
+//   }
+// }
+
 void trataInterrupcaoBotao(void *params)
 {
   int pino = 0;
+  int led = 0; 
+  char JSONAtributos[200];
 
   while(true)
   {
@@ -33,6 +75,16 @@ void trataInterrupcaoBotao(void *params)
         {
           vTaskDelay(50 / portTICK_PERIOD_MS);
         }
+
+        if(led){
+            sprintf(JSONAtributos, "{\"led\": 0}");
+            led = 0; 
+        } else {
+            sprintf(JSONAtributos, "{\"led\": 1}");
+            led = 1; 
+        }
+        mqtt_envia_mensagem("v1/devices/me/attributes", JSONAtributos);
+
         // Habilitar novamente a interrupção
         vTaskDelay(50 / portTICK_PERIOD_MS);
         gpio_isr_handler_add(pino, gpio_isr_handler, (void *) pino);
@@ -41,6 +93,7 @@ void trataInterrupcaoBotao(void *params)
     }
   }
 }
+
 
 void init_button()
 {

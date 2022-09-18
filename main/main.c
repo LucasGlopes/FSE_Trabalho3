@@ -30,8 +30,6 @@ void conectadoWifi(void * params)
 void trataComunicacaoComServidor(void * params)
 {
   char mensagem[50];
-  char JSONAtributos[200];
-
   if(xSemaphoreTake(conexaoMQTTSemaphore, portMAX_DELAY))
   {
     while(true)
@@ -44,10 +42,6 @@ void trataComunicacaoComServidor(void * params)
           mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
         }
       }
-
-      sprintf(JSONAtributos, "{\"quantidade de pinos\": 5, \n\"umidade\": 20}");
-      mqtt_envia_mensagem("v1/devices/me/attributes", JSONAtributos);
-
       vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
   }
