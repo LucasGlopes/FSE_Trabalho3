@@ -3,8 +3,10 @@
 #include "freertos/task.h"
 #include "driver/ledc.h"
 #include "esp_err.h"
+#include "nvs.h"
 
 #define LED_1 2
+#define PWM_MAX 255 
 
 void start_led()
 {
@@ -32,7 +34,13 @@ void start_led()
 
   ledc_fade_func_install(0);
 
-  ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 255, 1000 ,LEDC_FADE_WAIT_DONE);
+  int32_t valor_lido = 0;
+  valor_lido = le_valor_nvs("pwm");
+  if(valor_lido == -1){
+      valor_lido = PWM_MAX;
+  }
+
+  ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, valor_lido, 1000 ,LEDC_FADE_WAIT_DONE);
 
 
 
@@ -41,6 +49,7 @@ void start_led()
 void set_pwm(double intensity)
 {
     double percentage = intensity / 100;
-    int pwm = 255 * percentage; 
+    int pwm = PWM_MAX * percentage; 
     ledc_set_fade_time_and_start(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0,pwm , 1000 ,LEDC_FADE_WAIT_DONE);
+    grava_valor_nvs("pwm", pwm);
 }
