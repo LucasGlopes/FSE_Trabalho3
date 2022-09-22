@@ -17,6 +17,7 @@ xSemaphoreHandle conexaoWifiSemaphore;
 xSemaphoreHandle conexaoMQTTSemaphore;
 
 int current_humidity = 0;
+int limit_humidity = 60;
 
 void conectadoWifi(void * params)
 {
@@ -47,7 +48,7 @@ void trataComunicacaoComServidor(void * params)
           current_humidity = dados.humidity;
         }
       }
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
   }
 }
@@ -56,7 +57,7 @@ void trataBuzzer(void * params)
 {
     while(true)
     {
-      if(current_humidity > 55)
+      if(current_humidity > limit_humidity)
       {
         aciona_buzzer();
       }

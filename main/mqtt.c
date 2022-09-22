@@ -24,9 +24,11 @@
 #include "cJSON.h"
 #include "led.h"
 
+
 #define TAG "MQTT"
 
 extern xSemaphoreHandle conexaoMQTTSemaphore;
+extern int limit_humidity;
 esp_mqtt_client_handle_t client;
 
 void handle_response(char*);
@@ -79,7 +81,14 @@ void handle_response(char* data){
     cJSON * value  = cJSON_GetObjectItem(root, "params");
     ESP_LOGW(TAG, "METHOD GOT: %s", method->valuestring);
     ESP_LOGW(TAG, "VALUE GOT: %lf", value->valuedouble);
-    set_pwm(value->valuedouble); 
+    if(strcmp(method->valuestring, "pwm") == 0)
+    {
+        set_pwm(value->valuedouble); 
+    }
+    else
+    {
+        limit_humidity = value->valuedouble;
+    }
 }
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
