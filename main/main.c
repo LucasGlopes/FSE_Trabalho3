@@ -39,16 +39,13 @@ void trataComunicacaoComServidor(void * params)
   {
     while(true)
     {
-      if(CONFIG_ESP_MODE == 1)
-      {
-        struct dht11_reading dados = DHT11_read();
-        if(dados.temperature != -1 && dados.temperature != -1){
-          sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
-          mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
-          current_humidity = dados.humidity;
-        }
+      struct dht11_reading dados = DHT11_read();
+      if(dados.temperature != -1 && dados.temperature != -1){
+        sprintf(mensagem, "{\"temperatura\":%d, \n\"umidade\": %d}", dados.temperature,dados.humidity);
+        mqtt_envia_mensagem("v1/devices/me/telemetry", mensagem);
+        current_humidity = dados.humidity;
       }
-      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      vTaskDelay(5000 / portTICK_PERIOD_MS);
     }
   }
 }
@@ -72,11 +69,8 @@ void app_main(void)
     printf("MODO: %d\n", CONFIG_ESP_MODE);
     init_nvs();
     init_button();
+    DHT11_init(GPIO_NUM_4);
 
-    if(CONFIG_ESP_MODE == 1)
-    {
-      DHT11_init(GPIO_NUM_4);
-    }
     conexaoWifiSemaphore = xSemaphoreCreateBinary();
     conexaoMQTTSemaphore = xSemaphoreCreateBinary();
     wifi_start();
