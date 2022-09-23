@@ -58,5 +58,12 @@ idf.py -p (PORTA) flash monitor
 ## Dashboard
 ![screenshot](https://user-images.githubusercontent.com/49499946/191875178-b84a555c-02e0-4fa7-ba70-9efc86fdf328.png)
 
+Por meio da Dashboard, é possível:
+- Visualizar a variação de temperatura e umidade no tempo.
+- Visualizar quando o botão foi clicado.
+- Alterar a intensidade do Led.
+- Alterar o limite de Umidade (Caso a umidade atual ultrapasse esse limite, o buzzer emite um alarme).
+
+
 ## Vídeo
 Clique [aqui](https://youtu.be/5pny-U0F4bc) para ver o projeto em execução.
